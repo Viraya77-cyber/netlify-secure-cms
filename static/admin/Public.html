@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Harivant Posts</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #0f172a;
+      color: #fff;
+      padding: 20px;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 20px;
+    }
+
+    .card {
+      background: #020617;
+      border-radius: 14px;
+      overflow: hidden;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+    }
+
+    .card img {
+      width: 100%;
+      display: block;
+    }
+
+    .card .content {
+      padding: 15px;
+    }
+
+    .card h2 {
+      margin: 0 0 10px;
+      font-size: 18px;
+    }
+
+    .card p {
+      font-size: 14px;
+      opacity: 0.85;
+    }
+
+    .card a {
+      display: inline-block;
+      margin-top: 10px;
+      color: #22c55e;
+      text-decoration: none;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Harivant Posts</h1>
+
+  <div class="grid" id="posts"></div>
+
+  <script>
+    const supabaseUrl = "https://qjzvkdfidjsaykcnhigi.supabase.co";
+    const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFqenZrZGZpZGpzYXlrY25oaWdpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjU5Mzg4MDMsImV4cCI6MjA4MTUxNDgwM30.aH0oU7wnQ6C5jIKtBvN6Dv_p1kppQsogYLNXgqLekB8";
+
+    const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+
+    async function loadPosts() {
+      const { data, error } = await supabase
+        .from("pages")
+        .select("*")
+        .order("id", { ascending: false });
+
+      if (error) {
+        document.getElementById("posts").innerHTML = "Error loading posts";
+        return;
+      }
+
+      const container = document.getElementById("posts");
+      container.innerHTML = "";
+
+      data.forEach(post => {
+        container.innerHTML += `
+          <div class="card">
+            ${post.image_url ? `<img src="${post.image_url}">` : ""}
+            <div class="content">
+              <h2>${post.title}</h2>
+              <p>${post.content || ""}</p>
+              ${post.pdf_url ? `<a href="${post.pdf_url}" target="_blank">📄 View PDF</a>` : ""}
+            </div>
+          </div>
+        `;
+      });
+    }
+
+    loadPosts();
+  </script>
+
+</body>
+</html>
