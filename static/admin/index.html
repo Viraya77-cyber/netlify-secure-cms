@@ -5,6 +5,7 @@
   <title>Harivant Admin Panel</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
+  <!-- ✅ Correct Supabase v2 CDN -->
   <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
 
   <style>
@@ -70,6 +71,18 @@
       text-align: center;
       opacity: 0.7;
     }
+
+    .preview {
+      margin-top: 25px;
+      padding-top: 15px;
+      border-top: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .preview img {
+      width: 100%;
+      border-radius: 8px;
+      margin-top: 10px;
+    }
   </style>
 </head>
 <body>
@@ -85,14 +98,17 @@
     <button onclick="publishPost()">Publish Post</button>
 
     <div class="note">Data will be saved directly to Supabase</div>
+
+    <!-- 🔍 LIVE PREVIEW -->
+    <div class="preview" id="preview"></div>
   </div>
 
   <script>
-    // 🔥 SUPABASE CONFIG (ALREADY SET BY ME)
+    // ✅ SUPABASE CONFIG (CORRECT)
     const supabaseUrl = "https://qjzvkdfidjsaykcnhigi.supabase.co";
     const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFqenZrZGZpZGpzYXlrY25oaWdpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjU5Mzg4MDMsImV4cCI6MjA4MTUxNDgwM30.aH0oU7wnQ6C5jIKtBvN6Dv_p1kppQsogYLNXgqLekB8";
 
-    const supabase = supabaseJs.createClient(supabaseUrl, supabaseKey);
+    const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
 
     async function publishPost() {
       const title = document.getElementById("title").value.trim();
@@ -109,8 +125,8 @@
         .from("pages")
         .insert([
           {
-            title: title,
-            content: content,
+            title,
+            content,
             image_url: image_url || null,
             pdf_url: pdf_url || null
           }
@@ -120,6 +136,15 @@
         alert("❌ ERROR: " + error.message);
       } else {
         alert("✅ POST SAVED SUCCESSFULLY");
+
+        // 🔍 Preview
+        document.getElementById("preview").innerHTML = `
+          <h3>${title}</h3>
+          <p>${content}</p>
+          ${image_url ? `<img src="${image_url}">` : ""}
+          ${pdf_url ? `<a href="${pdf_url}" target="_blank">📄 View PDF</a>` : ""}
+        `;
+
         document.getElementById("title").value = "";
         document.getElementById("content").value = "";
         document.getElementById("image").value = "";
