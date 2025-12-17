@@ -1,43 +1,136 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8">
   <title>Harivant Admin Panel</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #0f172a;
+      color: #ffffff;
+      padding: 20px;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .container {
+      max-width: 520px;
+      margin: auto;
+      background: #020617;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.4);
+    }
+
+    input, textarea, button {
+      width: 100%;
+      margin-top: 12px;
+      padding: 12px;
+      font-size: 15px;
+      border-radius: 6px;
+      border: none;
+    }
+
+    input, textarea {
+      background: #020617;
+      color: #fff;
+      border: 1px solid #334155;
+    }
+
+    textarea {
+      min-height: 100px;
+      resize: vertical;
+    }
+
+    button {
+      background: #22c55e;
+      color: #000;
+      font-weight: bold;
+      cursor: pointer;
+      margin-top: 18px;
+    }
+
+    button:hover {
+      background: #16a34a;
+    }
+
+    .note {
+      margin-top: 15px;
+      font-size: 13px;
+      color: #94a3b8;
+      text-align: center;
+    }
+  </style>
 </head>
 <body>
 
-<h2>Harivant Admin Panel</h2>
-<button onclick="testInsert()">Test Insert</button>
+  <h1>Harivant Admin Panel</h1>
 
-<script src="https://unpkg.com/@supabase/supabase-js@2"></script>
-<script>
-  const supabaseUrl = "SUPABASE_URL_HERE";
-  const supabaseKey = "SUPABASE_ANON_KEY_HERE";
+  <div class="container">
+    <input id="title" placeholder="Post Title">
+    <textarea id="content" placeholder="Post Content"></textarea>
+    <input id="image" placeholder="Image URL (optional)">
+    <input id="pdf" placeholder="PDF URL (optional)">
 
-  const supabase = supabase.createClient(
-    supabaseUrl,
-    supabaseKey
-  );
+    <button onclick="insertPost()">Publish Post</button>
 
-  async function testInsert() {
-    const { data, error } = await supabase
-      .from("pages")
-      .insert([
-        {
-          title: "First Admin Post",
-          content: "Connected successfully",
-          image_url: "",
-          pdf_url: ""
-        }
-      ]);
+    <div class="note">
+      Data will be saved directly to Supabase
+    </div>
+  </div>
 
-    if (error) {
-      alert("ERROR: " + error.message);
-    } else {
-      alert("DATA INSERTED SUCCESSFULLY");
+  <!-- Supabase JS -->
+  <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+
+  <script>
+    // ✅ SUPABASE CONFIG (ALREADY SET)
+    const supabaseUrl = "https://qjzvkdfidjsaykcnhigi.supabase.co";
+    const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFqenZrZGZpZGpzYXlrY25oaWdpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjU5Mzg4MDMsImV4cCI6MjA4MTUxNDgwM30.aH0oU7wnQ6C5jIKtBvN6Dv_p1kppQsogYLNXgqLekB8";
+
+    const supabase = supabase.createClient(
+      supabaseUrl,
+      supabaseKey
+    );
+
+    async function insertPost() {
+      const title = document.getElementById("title").value.trim();
+      const content = document.getElementById("content").value.trim();
+      const image = document.getElementById("image").value.trim();
+      const pdf = document.getElementById("pdf").value.trim();
+
+      if (!title || !content) {
+        alert("Title and Content are required");
+        return;
+      }
+
+      const { error } = await supabase
+        .from("pages")
+        .insert([
+          {
+            title: title,
+            content: content,
+            image_url: image,
+            pdf_url: pdf
+          }
+        ]);
+
+      if (error) {
+        alert("ERROR: " + error.message);
+      } else {
+        alert("POST ADDED SUCCESSFULLY");
+        document.getElementById("title").value = "";
+        document.getElementById("content").value = "";
+        document.getElementById("image").value = "";
+        document.getElementById("pdf").value = "";
+      }
     }
-  }
-</script>
+  </script>
 
 </body>
 </html>
