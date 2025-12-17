@@ -1,24 +1,43 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
   <meta charset="UTF-8" />
   <title>Harivant Admin Panel</title>
 </head>
 <body>
-  <h1>Harivant Custom Admin Panel</h1>
-  <p>Supabase connection test</p>
 
-  <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
-  <script>
-    const supabaseUrl = "https://qjzvkdfidsaykcnighi.supabase.co";
-    const supabaseKey = "PASTE_YOUR_ANON_KEY_HERE";
+<h2>Harivant Admin Panel</h2>
+<button onclick="testInsert()">Test Insert</button>
 
-    const supabase = supabase.createClient(
-      supabaseUrl,
-      supabaseKey
-    );
+<script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+<script>
+  const supabaseUrl = "SUPABASE_URL_HERE";
+  const supabaseKey = "SUPABASE_ANON_KEY_HERE";
 
-    console.log("CONNECTED TO SUPABASE", supabase);
-  </script>
+  const supabase = supabase.createClient(
+    supabaseUrl,
+    supabaseKey
+  );
+
+  async function testInsert() {
+    const { data, error } = await supabase
+      .from("pages")
+      .insert([
+        {
+          title: "First Admin Post",
+          content: "Connected successfully",
+          image_url: "",
+          pdf_url: ""
+        }
+      ]);
+
+    if (error) {
+      alert("ERROR: " + error.message);
+    } else {
+      alert("DATA INSERTED SUCCESSFULLY");
+    }
+  }
+</script>
+
 </body>
 </html>
